@@ -17,37 +17,3 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-
-:root { --card-max-h: none; }
-.dashboard-card {
-  max-height: var(--card-max-h);
-  display: flex;
-  flex-direction: column;
-}
-.card-body {
-  overflow: auto;
-}
-
-
-/* --- Masonry using CSS columns --- */
-.masonry-cols {
-  columns: 3;
-  column-gap: 16px;
-}
-@media (max-width: 1279px) {
-  .masonry-cols { columns: 2; }
-}
-@media (max-width: 767px) {
-  .masonry-cols { columns: 1; }
-}
-
-/* Each card must be inline-block + avoid column breaks */
-.masonry-item {
-  display: inline-block;
-  width: 100%;
-  margin: 0 0 16px;
-  break-inside: avoid;
-}
-
-.dashboard-card { max-height: var(--card-max-h); display: flex; flex-direction: column; }
-.card-body { overflow: auto; }

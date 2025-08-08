@@ -357,8 +357,8 @@ const WeatherCard = ({ t }) => {
 
           <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
             <div className="flex items-center justify-between mb-2"><h3 className="text-base font-semibold">{t('forecastGeneric')}</h3><div className="flex gap-2"><button onClick={() => setForecastDays(7)} className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:opacity-90" style={{ border: forecastDays===7 ? `2px solid var(--accent-color)` : "2px solid transparent" }}>{t('d7')}</button><button onClick={() => setForecastDays(16)} className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:opacity-90" style={{ border: forecastDays===16 ? `2px solid var(--accent-color)` : "2px solid transparent" }}>{t('d16')}</button></div></div>
-            <div className="masonry-cols">
-{weatherData.daily.time.slice(0, forecastDays).map((dateString, index) => {
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+              {weatherData.daily.time.slice(0, forecastDays).map((dateString, index) => {
                 const maxTemp = Math.round(weatherData.daily.temperature_2m_max[index]);
                 const minTemp = Math.round(weatherData.daily.temperature_2m_min[index]);
                 const weatherCode = weatherData.daily.weather_code[index];
@@ -370,8 +370,7 @@ const WeatherCard = ({ t }) => {
                     className="flex flex-col items-center p-2 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm space-y-1"
                   >
                     <p className="text-xs font-semibold whitespace-nowrap">{dayName}</p>
-                    <div style={{ color: 'var(--accent-color)' }}>{getWeatherIcon(weatherCode)}
-</div>
+                    <div style={{ color: 'var(--accent-color)' }}>{getWeatherIcon(weatherCode)}</div>
                     <div className="text-[10px] text-center text-gray-500 dark:text-[#B3B3B3] h-6 overflow-hidden leading-tight">{t(getWeatherDescription(weatherCode))}</div>
                     <div className="mt-1 text-center text-xs">
                       <span className="font-bold">{maxTemp}°</span>
@@ -380,7 +379,8 @@ const WeatherCard = ({ t }) => {
                   </div>
                 );
               })}
-            </div></div>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -893,7 +893,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
         
       </div>
       {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
-      <div className="card-body grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {symbols.map((sym) => {
           const id = MAP[sym];
           const row = data[id];
@@ -919,23 +919,6 @@ const MarketTickerCard = ({ t, accentColor }) => {
 };
 
 export default function App() {
-
-  React.useLayoutEffect(() => {
-    const GAP = 16;
-    const TOP = 80;
-    const calc = () => {
-      const h = window.innerHeight || 900;
-      const isXL = window.matchMedia('(min-width: 1280px)').matches;
-      const isMD = window.matchMedia('(min-width: 768px)').matches && !isXL;
-      const rows = isXL ? 2 : isMD ? 3 : 9999;
-      const maxH = rows >= 9999 ? 'none' : Math.max(280, Math.floor((h - TOP - GAP * (rows + 1)) / rows));
-      document.documentElement.style.setProperty('--card-max-h', typeof maxH === 'number' ? `${maxH}px` : maxH);
-    };
-    calc();
-    window.addEventListener('resize', calc);
-    return () => window.removeEventListener('resize', calc);
-  }, []);
-
 
   // Trello-like collision: try pointerWithin first, then rectIntersection, then closestCenter
   const customCollision = (args) => {
@@ -1086,9 +1069,9 @@ export default function App() {
           </div>
         </div>
       )}
-
+      
       <div className="flex-grow p-4 md:p-8">
-        <div className="grid gap-4">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <NewsFeedCard t={t} language={language} accentColor={accentColor} />
           <MarketTickerCard t={t} accentColor={accentColor} />
           <WeatherCard t={t} />
