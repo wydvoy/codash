@@ -252,7 +252,7 @@ const WeatherCard = ({ t }) => {
   };
   
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('weather')}</h2>
         <form onSubmit={handleSearch} className="relative w-1/2">
@@ -262,10 +262,10 @@ const WeatherCard = ({ t }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('searchCity')}
-            className="w-full pl-8 pr-2 py-1 text-sm border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded-full focus:outline-none focus:ring-1 transition-all duration-300"
+            className="w-full pl-8 pr-2 py-1 text-sm border border-gray-300 dark:border-[#333333] bg-gray-100 dark:bg-[#2A2A2A] rounded-full focus:outline-none focus:ring-1 transition-all duration-300"
             style={{ '--tw-ring-color': 'var(--accent-color)' }}
           />
-          <button type="submit" className="absolute inset-y-0 left-0 flex items-center justify-center w-8 text-gray-500 dark:text-gray-400">
+          <button type="submit" className="absolute inset-y-0 left-0 flex items-center justify-center w-8 text-gray-500 dark:text-[#B3B3B3]">
             <Search size={16} />
           </button>
         </form>
@@ -286,10 +286,10 @@ const WeatherCard = ({ t }) => {
 
       {weatherData && !loading && (
         <div className="space-y-6">
-          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-inner transition-colors duration-300">
+          <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold">{city}, {country}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+              <p className="text-xs text-gray-500 dark:text-[#B3B3B3]">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
             </div>
             <div className="flex items-center justify-around space-x-2">
               <div className="flex items-center space-x-2">
@@ -300,26 +300,26 @@ const WeatherCard = ({ t }) => {
               </div>
               <div className="text-center">
                 <p className="text-base font-medium">{t(getWeatherDescription(weatherData.daily.weather_code[0]))}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-[#B3B3B3]">
                   {t('feelsLike')}: {Math.round(weatherData.hourly.apparent_temperature[0])}°C
                 </p>
               </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
-              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#333]">
+              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#e0e0e0]">
                 <Wind size={16} className="text-gray-600 dark:text-gray-300" />
                 <p className="mt-0.5">{Math.round(weatherData.hourly.wind_speed_10m[0])} km/h</p>
-                <p className="text-gray-500 dark:text-gray-400">{t('wind')}</p>
+                <p className="text-gray-500 dark:text-[#B3B3B3]">{t('wind')}</p>
               </div>
-              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#333]">
+              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#e0e0e0]">
                 <Droplets size={16} className="text-gray-600 dark:text-gray-300" />
                 <p className="mt-0.5">{weatherData.hourly.relative_humidity_2m[0]}%</p>
-                <p className="text-gray-500 dark:text-gray-400">{t('humidity')}</p>
+                <p className="text-gray-500 dark:text-[#B3B3B3]">{t('humidity')}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-inner transition-colors duration-300">
+          <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
             <h3 className="text-base font-semibold mb-2">{t('forecast')}</h3>
             <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
               {weatherData.daily.time.slice(0, 16).map((dateString, index) => {
@@ -331,11 +331,11 @@ const WeatherCard = ({ t }) => {
                 return (
                   <div
                     key={index}
-                    className="flex flex-col items-center p-2 bg-white dark:bg-[#333] rounded-lg shadow-sm space-y-1"
+                    className="flex flex-col items-center p-2 bg-white dark:bg-[#e0e0e0] rounded-lg shadow-sm space-y-1"
                   >
                     <p className="text-xs font-semibold whitespace-nowrap">{dayName}</p>
                     <div style={{ color: 'var(--accent-color)' }}>{getWeatherIcon(weatherCode)}</div>
-                    <div className="text-[10px] text-center text-gray-500 dark:text-gray-400 h-6 overflow-hidden leading-tight">{t(getWeatherDescription(weatherCode))}</div>
+                    <div className="text-[10px] text-center text-gray-500 dark:text-[#B3B3B3] h-6 overflow-hidden leading-tight">{t(getWeatherDescription(weatherCode))}</div>
                     <div className="mt-1 text-center text-xs">
                       <span className="font-bold">{maxTemp}°</span>
                       <span className="text-gray-400"> / {minTemp}°</span>
@@ -514,9 +514,9 @@ const CalculatorCard = ({ t, accentColor }) => {
   ];
 
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2>
-      <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-inner transition-colors duration-300">
+      <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
         <div className="text-right text-3xl md:text-4xl font-light h-12 overflow-hidden truncate">
           {expression}
         </div>
@@ -599,7 +599,7 @@ const WorkTimerCard = ({ t }) => {
   const currentEndTimeString = endTime ? endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : t('notSet');
 
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
+    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
         <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-600">
@@ -607,16 +607,16 @@ const WorkTimerCard = ({ t }) => {
         </button>
       </div>
 
-      <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-inner text-center space-y-2">
-        <p className="text-sm text-gray-500 dark:text-gray-400">{t('timeRemaining')} {currentEndTimeString}:</p>
+      <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner text-center space-y-2">
+        <p className="text-sm text-gray-500 dark:text-[#B3B3B3]">{t('timeRemaining')} {currentEndTimeString}:</p>
         <div className="text-5xl font-bold" style={{ color: 'var(--accent-color)' }}>
           {remainingTime !== null && remainingTime > 0 ? formatTime(remainingTime) : '00:00:00'}
         </div>
       </div>
       
       {showSettings && (
-        <div className="absolute inset-0 bg-white/70 dark:bg-[#1f1f1f]/70 backdrop-blur-sm flex items-center justify-center rounded-3xl transition-opacity duration-300">
-          <div className="bg-white dark:bg-[#2c2c2c] p-6 rounded-2xl shadow-xl w-80 relative">
+        <div className="absolute inset-0 bg-white/70 dark:bg-[#121212]/70 backdrop-blur-sm flex items-center justify-center rounded-3xl transition-opacity duration-300">
+          <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl shadow-xl w-80 relative">
             <h3 className="text-xl font-bold mb-4">{t('setEndTime')}</h3>
             <button onClick={() => setShowSettings(false)} className="absolute top-4 right-4 p-1 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
               <X size={20} />
@@ -626,7 +626,7 @@ const WorkTimerCard = ({ t }) => {
                 ref={endTimeInputRef}
                 type="time"
                 name="time"
-                className="w-full text-center p-2 text-xl bg-gray-100 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2"
+                className="w-full text-center p-2 text-xl bg-gray-100 dark:bg-[#2A2A2A] rounded-xl focus:outline-none focus:ring-2"
                 style={{ '--tw-ring-color': 'var(--accent-color)' }}
                 defaultValue={endTime ? `${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}` : ''}
                 required
@@ -692,14 +692,14 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#f3f6fa] dark:bg-[#1f1f1f] text-[#333] dark:text-[#f0f0f0] min-h-screen p-4 flex flex-col font-['Source_Code_Pro',_monospace] transition-colors duration-300">
+    <div className="bg-[#f3f6fa] dark:bg-[#121212] text-[#e0e0e0] dark:text-[#f0f0f0] min-h-screen p-4 flex flex-col font-['Source_Code_Pro',_monospace] transition-colors duration-300">
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
       <script src="https://cdn.tailwindcss.com"></script>
       
       <div className="flex justify-end p-4 absolute top-0 right-0 z-10">
-        <div className="flex space-x-2 bg-white dark:bg-[#2c2c2c] p-2 rounded-full shadow-lg">
+        <div className="flex space-x-2 bg-white dark:bg-[#1e1e1e] p-2 rounded-full shadow-lg">
           <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" title="Light/Dark Switch">
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
@@ -714,7 +714,7 @@ export default function App() {
       
       {isColorPickerOpen && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-20">
-          <div className="bg-white dark:bg-[#2c2c2c] p-6 rounded-2xl shadow-xl w-80 relative">
+          <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl shadow-xl w-80 relative">
             <h3 className="text-xl font-bold mb-4">{t('selectColor')}</h3>
             <div className="flex items-center justify-center mb-4">
                 <input
@@ -743,22 +743,6 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex-none p-4 pb-2 md:p-8 md:pb-4 text-center">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
-          {t('dashboardTitle')}
-        </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
-          {t('dashboardSubtitle')}
-        </p>
       </div>
-      
-      <div className="flex-grow p-4 md:p-8 overflow-x-auto">
-        <div className="flex space-x-4">
-          <WeatherCard t={t} />
-          <CalculatorCard t={t} accentColor={accentColor} />
-          <WorkTimerCard t={t} />
-        </div>
-      </div>
-    </div>
   );
 }
