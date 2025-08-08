@@ -169,7 +169,6 @@ const translations = {
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
   const [forecastDays, setForecastDays] = useState(16);
-  const [forecastDays, setForecastDays] = useState(16);
 
   const [city, setCity] = useState('Siegen');
   const [country, setCountry] = useState('Germany');
@@ -1059,7 +1058,7 @@ export default function App() {
         </div>
       )}
 
-      <!-- removed title block for space --><div className="hidden">
+	<div className="hidden">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
           {t('dashboardTitle')}
         </h1>
