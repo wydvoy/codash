@@ -288,7 +288,7 @@ const WeatherCard = ({ t }) => {
   
   return (
     <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between drag-handle cursor-move select-none">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('weather')}</h2>
         <form onSubmit={handleSearch} className="relative w-1/2">
           <input
@@ -635,7 +635,7 @@ const WorkTimerCard = ({ t }) => {
 
   return (
     <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center drag-handle cursor-move select-none">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
         <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
           <Settings size={20} />
@@ -713,7 +713,7 @@ const NewsFeedCard = ({ t, language, accentColor }) => {
       const entries = [...doc.querySelectorAll('item, entry')].map((n) => {
         const title = n.querySelector('title')?.textContent?.trim() || 'Untitled';
         const link =
-          n.querySelector('link')?.getAttribute('href') ||
+          n.querySelector('link')?.getAttribute?.('href') ||
           n.querySelector('link')?.textContent ||
           '#';
         const pub =
@@ -721,7 +721,19 @@ const NewsFeedCard = ({ t, language, accentColor }) => {
           n.querySelector('updated')?.textContent ||
           n.querySelector('published')?.textContent ||
           '';
-        return { title, link, pubDate: pub ? new Date(pub) : new Date(0) };
+        // try to find preview image
+        const thumb = n.querySelector('media\:thumbnail, thumbnail, media\:content, enclosure');
+        let img = null;
+        if (thumb) {
+          img = thumb.getAttribute('url') || thumb.getAttribute('href') || null;
+        }
+        if (!img) {
+          const content = n.querySelector('content, description');
+          const html = content?.textContent || '';
+          const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+          if (m) img = m[1];
+        }
+        return { title, link, pubDate: pub ? new Date(pub) : new Date(0), img };
       });
 
       entries.sort((a, b) => b.pubDate - a.pubDate);
@@ -758,11 +770,28 @@ const NewsFeedCard = ({ t, language, accentColor }) => {
       <div className="max-h-80 overflow-y-auto pr-1 space-y-2">
         {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
         {items.map((it, idx) => (
-          <a key={idx} href={it.link} target="_blank" rel="noopener noreferrer"
-             className="block p-3 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] hover:opacity-90 transition">
-            <div className="text-sm font-semibold leading-snug">{it.title}</div>
-            <div className="text-[11px] opacity-70 mt-1">
-              {it.pubDate instanceof Date && !isNaN(it.pubDate) ? it.pubDate.toLocaleString() : ''}
+          <a
+            key={idx}
+            href={it.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block p-3 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] hover:opacity-90 transition"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold leading-snug line-clamp-2">{it.title}</div>
+                <div className="text-[11px] opacity-70 mt-1">
+                  {it.pubDate instanceof Date && !isNaN(it.pubDate) ? it.pubDate.toLocaleString() : ''}
+                </div>
+              </div>
+              {it.img && (
+                <img
+                  src={it.img}
+                  alt=""
+                  className="w-16 h-16 rounded-lg object-cover flex-none"
+                  loading="lazy"
+                />
+              )}
             </div>
           </a>
         ))}
@@ -868,7 +897,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
           const up = typeof change === 'number' ? change >= 0 : null;
           return (
             <div key={sym} className="p-3 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] flex flex-col gap-1">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between drag-handle cursor-move select-none">
                 <div className="text-sm font-bold">{sym}</div>
                 <button onClick={() => removeSymbol(sym)} className="text-[11px] opacity-70 hover:opacity-100" title={t('remove')}>✕</button>
               </div>
@@ -1006,7 +1035,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex-none p-4 pb-2 md:p-8 md:pb-4 text-center">
+      <!-- removed title block for space --><div className="hidden">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
           {t('dashboardTitle')}
         </h1>
