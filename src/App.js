@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Loader, Sun, Cloud, CloudRain, CloudSnow, Wind, Droplets, Settings, X, Moon, Globe, Palette } from 'lucide-react';
+import { Search, Loader, Sun, Cloud, CloudRain, CloudSnow, Wind, Droplets, Settings, X, Moon, Globe, Palette, Move } from 'lucide-react';
 
 // === Helper functions for cookie management ===
 const getCookie = (name) => {
@@ -168,6 +168,7 @@ const translations = {
 
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
+  const [forecastDays, setForecastDays] = useState(16);
   const [forecastDays, setForecastDays] = useState(16);
 
   const [city, setCity] = useState('Siegen');
@@ -914,6 +915,8 @@ const MarketTickerCard = ({ t, accentColor }) => {
 };
 
 export default function App() {
+  const rowHeight = 26; // fixed row height for stable 2-row layout
+
   const defaultLayouts = {
     lg: [
       { i: 'weather', x: 0, y: 0, w: 1, h: 8 },
