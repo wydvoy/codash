@@ -168,7 +168,7 @@ const translations = {
 
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
-  const [forecastDays, setForecastDays] = useState(16);
+  const [forecastDays, setForecastDays] = useState(7);
 
   const [city, setCity] = useState('Siegen');
   const [country, setCountry] = useState('Germany');
@@ -305,9 +305,7 @@ const WeatherCard = ({ t }) => {
           </button>
         </form>
       </div>
-          <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg>
-          </button>
+          
 
       {loading && (
         <div className="flex flex-col items-center justify-center p-8">
@@ -553,7 +551,7 @@ const CalculatorCard = ({ t, accentColor }) => {
 
   return (
     <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-6 transition-all duration-300">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2><button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2>
       <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
         <div className="text-right text-3xl md:text-4xl font-light h-12 overflow-hidden truncate">
           {expression}
@@ -643,7 +641,7 @@ const WorkTimerCard = ({ t }) => {
         <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
           <Settings size={20} />
         </button>
-        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
+        
       </div>
 
       <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner text-center space-y-2">
@@ -770,7 +768,7 @@ const NewsFeedCard = ({ t, language, accentColor }) => {
             <option key={f.name} value={i}>{f.name}</option>
           ))}
         </select>
-        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
+        
       </div>
       <div className="max-h-64 md:max-h-72 overflow-y-auto pr-1 space-y-2">
         {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
@@ -883,7 +881,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
           <option value="EUR">EUR</option>
           <option value="USD">USD</option>
         </select>
-        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
+        
       </div>
       <div className="flex gap-2">
         <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('placeholderSymbol')}
@@ -892,7 +890,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
         <button onClick={addSymbol} className="px-4 py-2 rounded-xl text-white font-semibold" style={{ backgroundColor: accentColor }}>
           {t('addSymbol')}
         </button>
-        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
+        
       </div>
       {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -921,6 +919,16 @@ const MarketTickerCard = ({ t, accentColor }) => {
 };
 
 export default function App() {
+
+  // Trello-like collision: try pointerWithin first, then rectIntersection, then closestCenter
+  const customCollision = (args) => {
+    const pointer = pointerWithin(args);
+    if (pointer.length) return pointer;
+    const rects = rectIntersection(args);
+    if (rects.length) return rects;
+    return closestCenter(args);
+  };
+
   const [order, setOrder] = React.useState(() => {
     try { return JSON.parse(localStorage.getItem('dashboard_order_v1')) || ["weather","calc","timer","news","markets","placeholder"]; } catch { return ["weather","calc","timer","news","markets","placeholder"]; }
   });
@@ -1061,6 +1069,15 @@ export default function App() {
           </div>
         </div>
       )}
+
+      <!-- removed title block for space --><div className="hidden">
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
+          {t('dashboardTitle')}
+        </h1>
+        <p className="mt-2 text-gray-500 dark:text-[#B3B3B3]">
+          {t('dashboardSubtitle')}
+        </p>
+      </div>
       
       <div className="flex-grow p-4 md:p-8">
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
