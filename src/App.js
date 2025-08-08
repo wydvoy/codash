@@ -169,6 +169,7 @@ const translations = {
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
   const [forecastDays, setForecastDays] = useState(16);
+  const [forecastDays, setForecastDays] = useState(16);
 
   const [city, setCity] = useState('Siegen');
   const [country, setCountry] = useState('Germany');
@@ -287,7 +288,7 @@ const WeatherCard = ({ t }) => {
   };
   
   return (
-    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-6 transition-all duration-300">
       <div className="flex items-center justify-between drag-handle cursor-move select-none">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('weather')}</h2>
         <form onSubmit={handleSearch} className="relative w-1/2">
@@ -305,6 +306,9 @@ const WeatherCard = ({ t }) => {
           </button>
         </form>
       </div>
+          <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg>
+          </button>
 
       {loading && (
         <div className="flex flex-col items-center justify-center p-8">
@@ -549,8 +553,8 @@ const CalculatorCard = ({ t, accentColor }) => {
   ];
 
   return (
-    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2>
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-6 transition-all duration-300">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2><button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
       <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
         <div className="text-right text-3xl md:text-4xl font-light h-12 overflow-hidden truncate">
           {expression}
@@ -634,12 +638,13 @@ const WorkTimerCard = ({ t }) => {
   const currentEndTimeString = endTime ? endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : t('notSet');
 
   return (
-    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-6 transition-all duration-300 relative">
       <div className="flex justify-between items-center drag-handle cursor-move select-none">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
         <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
           <Settings size={20} />
         </button>
+        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
       </div>
 
       <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner text-center space-y-2">
@@ -753,7 +758,7 @@ const NewsFeedCard = ({ t, language, accentColor }) => {
   }, [sourceIndex, language]);
 
   return (
-    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-4 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-4 transition-all duration-300">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">{t('news')}</h2>
         <select
@@ -766,8 +771,9 @@ const NewsFeedCard = ({ t, language, accentColor }) => {
             <option key={f.name} value={i}>{f.name}</option>
           ))}
         </select>
+        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
       </div>
-      <div className="max-h-80 overflow-y-auto pr-1 space-y-2">
+      <div className="max-h-64 md:max-h-72 overflow-y-auto pr-1 space-y-2">
         {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
         {items.map((it, idx) => (
           <a
@@ -869,7 +875,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
   const fmt = (n) => new Intl.NumberFormat(undefined, { style: 'currency', currency, maximumFractionDigits: 6 }).format(n);
 
   return (
-    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-4 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-4 transition-all duration-300">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Markets</h2>
         <select value={currency} onChange={(e) => setCurrency(e.target.value)}
@@ -878,6 +884,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
           <option value="EUR">EUR</option>
           <option value="USD">USD</option>
         </select>
+        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
       </div>
       <div className="flex gap-2">
         <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('placeholderSymbol')}
@@ -886,6 +893,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
         <button onClick={addSymbol} className="px-4 py-2 rounded-xl text-white font-semibold" style={{ backgroundColor: accentColor }}>
           {t('addSymbol')}
         </button>
+        <button className="drag-handle p-1 rounded hover:bg-black/10 dark:hover:bg-white/10" title="Drag"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4"/></svg></button>
       </div>
       {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -914,7 +922,21 @@ const MarketTickerCard = ({ t, accentColor }) => {
 };
 
 export default function App() {
-  const rowHeight = 26; // fixed row height for stable 2-row layout
+  const V_MARGIN = 16;
+  const CARD_ROWS = 10;            // each card's grid height
+  const TOTAL_ROWS = CARD_ROWS * 2; // two rows target on large screens
+  const computeRowHeight = () => {
+    const vh = window.innerHeight || 900;
+    const reservedTopBottom = 120; // top controls / paddings
+    const available = vh - reservedTopBottom - V_MARGIN * (2 + 1);
+    return Math.max(18, Math.floor(available / TOTAL_ROWS));
+  };
+  const [rowHeight, setRowHeight] = React.useState(computeRowHeight());
+  React.useEffect(() => {
+    const onResize = () => setRowHeight(computeRowHeight());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []); // fixed row height for stable 2-row layout
 
   const defaultLayouts = {
     lg: [
@@ -1037,7 +1059,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="hidden">
+      <!-- removed title block for space --><div className="hidden">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
           {t('dashboardTitle')}
         </h1>
