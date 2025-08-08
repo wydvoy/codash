@@ -252,7 +252,7 @@ const WeatherCard = ({ t }) => {
   };
   
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('weather')}</h2>
         <form onSubmit={handleSearch} className="relative w-1/2">
@@ -514,7 +514,7 @@ const CalculatorCard = ({ t, accentColor }) => {
   ];
 
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2>
       <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-inner transition-colors duration-300">
         <div className="text-right text-3xl md:text-4xl font-light h-12 overflow-hidden truncate">
@@ -599,7 +599,7 @@ const WorkTimerCard = ({ t }) => {
   const currentEndTimeString = endTime ? endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : t('notSet');
 
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
+    <div className="w-full bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
         <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
@@ -751,8 +751,8 @@ export default function App() {
         </p>
       </div>
       
-      <div className="flex-grow p-4 md:p-8 overflow-x-auto">
-        <div className="flex space-x-4">
+      <div className="flex-grow p-4 md:p-8">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <WeatherCard t={t} />
           <CalculatorCard t={t} accentColor={accentColor} />
           <WorkTimerCard t={t} />
