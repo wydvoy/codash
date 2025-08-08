@@ -360,7 +360,7 @@ const CalculatorCard = ({ t, accentColor }) => {
   const calculate = (expr) => {
     try {
       const sanitizedExpr = expr.replace(/×/g, '*').replace(/÷/g, '/');
-      const tokens = sanitizedExpr.match(/(\d+\.?\d*|[+\-*/])/g) || [];
+      const tokens = sanitizedExpr.match(/(\d+\.?\d*|\-|\+|\*|\/)/g) || [];
       
       let numbers = [];
       let operators = [];
@@ -602,7 +602,7 @@ const WorkTimerCard = ({ t }) => {
     <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#2c2c2c] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
-        <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+        <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
           <Settings size={20} />
         </button>
       </div>
@@ -696,7 +696,6 @@ export default function App() {
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
-      <script src="https://cdn.tailwindcss.com"></script>
       
       <div className="flex justify-end p-4 absolute top-0 right-0 z-10">
         <div className="flex space-x-2 bg-white dark:bg-[#2c2c2c] p-2 rounded-full shadow-lg">
