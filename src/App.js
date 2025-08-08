@@ -1069,15 +1069,6 @@ export default function App() {
           </div>
         </div>
       )}
-
-      <!-- removed title block for space --><div className="hidden">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
-          {t('dashboardTitle')}
-        </h1>
-        <p className="mt-2 text-gray-500 dark:text-[#B3B3B3]">
-          {t('dashboardSubtitle')}
-        </p>
-      </div>
       
       <div className="flex-grow p-4 md:p-8">
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
