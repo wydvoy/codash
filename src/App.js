@@ -22,6 +22,39 @@ const setCookie = (name, value, days) => {
 // === Translations ===
 const translations = {
   en: {
+    news: 'News',
+    source: 'Source',
+    currency: 'Currency',
+    addSymbol: 'Add',
+    placeholderSymbol: 'Add symbol (e.g. BTC)',
+    price: 'Price',
+    change24h: '24h',
+    remove: 'Remove',
+    refreshing: 'Refreshing…',
+    'days7': '7D',
+    'days16': '16D',
+    'forecastGeneric': 'Forecast',
+    'd7': '7D',
+    'd16': '16D',
+  },
+  de: {
+    news: 'Nachrichten',
+    source: 'Quelle',
+    currency: 'Währung',
+    addSymbol: 'Hinzufügen',
+    placeholderSymbol: 'Symbol hinzufügen (z. B. BTC)',
+    price: 'Preis',
+    change24h: '24h',
+    remove: 'Entfernen',
+    refreshing: 'Aktualisiere…',
+    'days7': '7 Tage',
+    'days16': '16 Tage',
+    'forecastGeneric': 'Vorhersage',
+    'd7': '7 Tage',
+    'd16': '16 Tage',
+  },
+
+  en: {
     weather: 'Weather',
     searchCity: 'Search city...',
     today: 'Today',
@@ -135,6 +168,9 @@ const translations = {
 
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
+  const [forecastDays, setForecastDays] = useState(16);
+  const [forecastDays, setForecastDays] = useState(16);
+
   const [city, setCity] = useState('Siegen');
   const [country, setCountry] = useState('Germany');
   const [weatherData, setWeatherData] = useState(null);
@@ -252,7 +288,7 @@ const WeatherCard = ({ t }) => {
   };
   
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('weather')}</h2>
         <form onSubmit={handleSearch} className="relative w-1/2">
@@ -306,12 +342,12 @@ const WeatherCard = ({ t }) => {
               </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
-              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#e0e0e0]">
+              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#2A2A2A]">
                 <Wind size={16} className="text-gray-600 dark:text-gray-300" />
                 <p className="mt-0.5">{Math.round(weatherData.hourly.wind_speed_10m[0])} km/h</p>
                 <p className="text-gray-500 dark:text-[#B3B3B3]">{t('wind')}</p>
               </div>
-              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#e0e0e0]">
+              <div className="flex flex-col items-center p-1 rounded-lg bg-white dark:bg-[#2A2A2A]">
                 <Droplets size={16} className="text-gray-600 dark:text-gray-300" />
                 <p className="mt-0.5">{weatherData.hourly.relative_humidity_2m[0]}%</p>
                 <p className="text-gray-500 dark:text-[#B3B3B3]">{t('humidity')}</p>
@@ -320,9 +356,9 @@ const WeatherCard = ({ t }) => {
           </div>
 
           <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
-            <h3 className="text-base font-semibold mb-2">{t('forecast')}</h3>
+            <div className="flex items-center justify-between mb-2"><h3 className="text-base font-semibold">{t('forecastGeneric')}</h3><div className="flex gap-2"><button onClick={() => setForecastDays(7)} className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:opacity-90" style={{ border: forecastDays===7 ? `2px solid var(--accent-color)` : "2px solid transparent" }}>{t('d7')}</button><button onClick={() => setForecastDays(16)} className="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:opacity-90" style={{ border: forecastDays===16 ? `2px solid var(--accent-color)` : "2px solid transparent" }}>{t('d16')}</button></div></div>
             <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-              {weatherData.daily.time.slice(0, 16).map((dateString, index) => {
+              {weatherData.daily.time.slice(0, forecastDays).map((dateString, index) => {
                 const maxTemp = Math.round(weatherData.daily.temperature_2m_max[index]);
                 const minTemp = Math.round(weatherData.daily.temperature_2m_min[index]);
                 const weatherCode = weatherData.daily.weather_code[index];
@@ -331,7 +367,7 @@ const WeatherCard = ({ t }) => {
                 return (
                   <div
                     key={index}
-                    className="flex flex-col items-center p-2 bg-white dark:bg-[#e0e0e0] rounded-lg shadow-sm space-y-1"
+                    className="flex flex-col items-center p-2 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-sm space-y-1"
                   >
                     <p className="text-xs font-semibold whitespace-nowrap">{dayName}</p>
                     <div style={{ color: 'var(--accent-color)' }}>{getWeatherIcon(weatherCode)}</div>
@@ -360,7 +396,7 @@ const CalculatorCard = ({ t, accentColor }) => {
   const calculate = (expr) => {
     try {
       const sanitizedExpr = expr.replace(/×/g, '*').replace(/÷/g, '/');
-      const tokens = sanitizedExpr.match(/(\\d+\\.?\\d*|\\-|\\+|\\*|\\/)/g) || [];
+      const tokens = sanitizedExpr.match(/(\d+\.?\d*|\-|\+|\*|\/)/g) || [];
       
       let numbers = [];
       let operators = [];
@@ -514,7 +550,7 @@ const CalculatorCard = ({ t, accentColor }) => {
   ];
 
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('calculator')}</h2>
       <div className="bg-gray-100 dark:bg-[#2A2A2A] p-4 rounded-xl shadow-inner transition-colors duration-300">
         <div className="text-right text-3xl md:text-4xl font-light h-12 overflow-hidden truncate">
@@ -599,10 +635,10 @@ const WorkTimerCard = ({ t }) => {
   const currentEndTimeString = endTime ? endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : t('notSet');
 
   return (
-    <div className="flex-none min-w-[320px] lg:min-w-[400px] bg-white dark:bg-[#1e1e1e] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 transition-all duration-300 relative">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
-        <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+        <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
           <Settings size={20} />
         </button>
       </div>
@@ -616,7 +652,7 @@ const WorkTimerCard = ({ t }) => {
       
       {showSettings && (
         <div className="absolute inset-0 bg-white/70 dark:bg-[#121212]/70 backdrop-blur-sm flex items-center justify-center rounded-3xl transition-opacity duration-300">
-          <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl shadow-xl w-80 relative">
+          <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-2xl shadow-xl w-80 relative">
             <h3 className="text-xl font-bold mb-4">{t('setEndTime')}</h3>
             <button onClick={() => setShowSettings(false)} className="absolute top-4 right-4 p-1 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
               <X size={20} />
@@ -649,7 +685,236 @@ const WorkTimerCard = ({ t }) => {
 };
 
 // Main App component
+
+// === NewsFeedCard Component ===
+const NewsFeedCard = ({ t, language, accentColor }) => {
+  const FEEDS = language === 'de'
+    ? [
+        { name: 'Tagesschau', url: 'https://www.tagesschau.de/xml/rss2' },
+        { name: 'heise', url: 'https://www.heise.de/rss/heise-atom.xml' },
+      ]
+    : [
+        { name: 'BBC', url: 'https://feeds.bbci.co.uk/news/rss.xml' },
+        { name: 'NASA', url: 'https://www.nasa.gov/rss/dyn/breaking_news.rss' },
+      ];
+
+  const [sourceIndex, setSourceIndex] = React.useState(0);
+  const [items, setItems] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  const fetchRSS = async (feedUrl) => {
+    setLoading(true);
+    try {
+      const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
+      const res = await fetch(proxy);
+      const json = await res.json();
+      const xml = json.contents;
+      const doc = new DOMParser().parseFromString(xml, 'text/xml');
+
+      const entries = [...doc.querySelectorAll('item, entry')].map((n) => {
+        const title = n.querySelector('title')?.textContent?.trim() || 'Untitled';
+        const link =
+          n.querySelector('link')?.getAttribute('href') ||
+          n.querySelector('link')?.textContent ||
+          '#';
+        const pub =
+          n.querySelector('pubDate')?.textContent ||
+          n.querySelector('updated')?.textContent ||
+          n.querySelector('published')?.textContent ||
+          '';
+        return { title, link, pubDate: pub ? new Date(pub) : new Date(0) };
+      });
+
+      entries.sort((a, b) => b.pubDate - a.pubDate);
+      setItems(entries.slice(0, 15));
+    } catch (e) {
+      console.error(e);
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchRSS(FEEDS[sourceIndex].url);
+    const id = setInterval(() => fetchRSS(FEEDS[sourceIndex].url), 3 * 60 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [sourceIndex, language]);
+
+  return (
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-4 transition-all duration-300">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-2xl font-bold">{t('news')}</h2>
+        <select
+          value={sourceIndex}
+          onChange={(e) => setSourceIndex(Number(e.target.value))}
+          className="px-3 py-1 rounded-full bg-gray-100 dark:bg-[#2A2A2A] text-sm focus:outline-none focus:ring"
+          style={{ '--tw-ring-color': accentColor }}
+        >
+          {FEEDS.map((f, i) => (
+            <option key={f.name} value={i}>{f.name}</option>
+          ))}
+        </select>
+      </div>
+      <div className="max-h-80 overflow-y-auto pr-1 space-y-2">
+        {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
+        {items.map((it, idx) => (
+          <a key={idx} href={it.link} target="_blank" rel="noopener noreferrer"
+             className="block p-3 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] hover:opacity-90 transition">
+            <div className="text-sm font-semibold leading-snug">{it.title}</div>
+            <div className="text-[11px] opacity-70 mt-1">
+              {it.pubDate instanceof Date && !isNaN(it.pubDate) ? it.pubDate.toLocaleString() : ''}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// === MarketTickerCard Component ===
+const MarketTickerCard = ({ t, accentColor }) => {
+  const MAP = {
+    BTC: 'bitcoin',
+    ETH: 'ethereum',
+    SOL: 'solana',
+    ADA: 'cardano',
+    DOGE: 'dogecoin',
+    XRP: 'ripple',
+    LTC: 'litecoin',
+    DOT: 'polkadot',
+    AVAX: 'avalanche-2',
+    MATIC: 'polygon',
+    BNB: 'binancecoin',
+  };
+  const [symbols, setSymbols] = React.useState(() => {
+    const saved = localStorage.getItem('ticker_symbols');
+    return saved ? JSON.parse(saved) : ['BTC', 'ETH', 'SOL'];
+  });
+  const [currency, setCurrency] = React.useState(() => localStorage.getItem('ticker_currency') || 'EUR');
+  const [data, setData] = React.useState({});
+  const [input, setInput] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+
+  const fetchPrices = async () => {
+    const ids = symbols.map((s) => MAP[s.toUpperCase()]).filter(Boolean).join(',');
+    if (!ids) return;
+    setLoading(true);
+    try {
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,eur&include_24hr_change=true`;
+      const res = await fetch(url);
+      const json = await res.json();
+      setData(json);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchPrices();
+    const id = setInterval(fetchPrices, 60 * 1000);
+    return () => clearInterval(id);
+  }, [symbols]);
+
+  React.useEffect(() => {
+    localStorage.setItem('ticker_symbols', JSON.stringify(symbols));
+  }, [symbols]);
+
+  React.useEffect(() => {
+    localStorage.setItem('ticker_currency', currency);
+  }, [currency]);
+
+  const addSymbol = () => {
+    const sym = input.trim().toUpperCase();
+    if (!sym) return;
+    if (!MAP[sym]) {
+      alert(`Unknown symbol: ${sym}`);
+      return;
+    }
+    if (!symbols.includes(sym)) setSymbols([...symbols, sym]);
+    setInput('');
+  };
+
+  const removeSymbol = (sym) => setSymbols(symbols.filter((s) => s !== sym));
+  const fmt = (n) => new Intl.NumberFormat(undefined, { style: 'currency', currency, maximumFractionDigits: 6 }).format(n);
+
+  return (
+    <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 md:p-8 space-y-4 transition-all duration-300">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-2xl font-bold">Markets</h2>
+        <select value={currency} onChange={(e) => setCurrency(e.target.value)}
+          className="px-3 py-1 rounded-full bg-gray-100 dark:bg-[#2A2A2A] text-sm focus:outline-none focus:ring"
+          style={{ '--tw-ring-color': accentColor }}>
+          <option value="EUR">EUR</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+      <div className="flex gap-2">
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('placeholderSymbol')}
+          className="flex-1 px-3 py-2 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] text-sm focus:outline-none focus:ring"
+          style={{ '--tw-ring-color': accentColor }} />
+        <button onClick={addSymbol} className="px-4 py-2 rounded-xl text-white font-semibold" style={{ backgroundColor: accentColor }}>
+          {t('addSymbol')}
+        </button>
+      </div>
+      {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {symbols.map((sym) => {
+          const id = MAP[sym];
+          const row = data[id];
+          const price = currency === 'EUR' ? row?.eur : row?.usd;
+          const change = currency === 'EUR' ? row?.eur_24h_change : row?.usd_24h_change;
+          const up = typeof change === 'number' ? change >= 0 : null;
+          return (
+            <div key={sym} className="p-3 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-bold">{sym}</div>
+                <button onClick={() => removeSymbol(sym)} className="text-[11px] opacity-70 hover:opacity-100" title={t('remove')}>✕</button>
+              </div>
+              <div className="text-lg font-semibold">{price != null ? fmt(price) : '—'}</div>
+              <div className={up === null ? '' : up ? 'text-green-600' : 'text-red-600'}>
+                {t('change24h')}: {change != null ? `${change.toFixed(2)}%` : '—'}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
+  const defaultLayouts = {
+    lg: [
+      { i: 'weather', x: 0, y: 0, w: 1, h: 8 },
+      { i: 'calc', x: 1, y: 0, w: 1, h: 8 },
+      { i: 'timer', x: 2, y: 0, w: 1, h: 8 },
+      { i: 'news', x: 0, y: 8, w: 1, h: 10 },
+      { i: 'markets', x: 1, y: 8, w: 1, h: 10 },
+      { i: 'placeholder', x: 2, y: 8, w: 1, h: 10 },
+    ],
+    md: [
+      { i: 'weather', x: 0, y: 0, w: 1, h: 8 },
+      { i: 'calc', x: 1, y: 0, w: 1, h: 8 },
+      { i: 'timer', x: 0, y: 8, w: 2, h: 8 },
+      { i: 'news', x: 0, y: 16, w: 1, h: 10 },
+      { i: 'markets', x: 1, y: 16, w: 1, h: 10 },
+      { i: 'placeholder', x: 0, y: 26, w: 2, h: 10 },
+    ],
+    sm: [
+      { i: 'weather', x: 0, y: 0, w: 1, h: 8 },
+      { i: 'calc', x: 0, y: 8, w: 1, h: 8 },
+      { i: 'timer', x: 0, y: 16, w: 1, h: 8 },
+      { i: 'news', x: 0, y: 24, w: 1, h: 10 },
+      { i: 'markets', x: 0, y: 34, w: 1, h: 10 },
+      { i: 'placeholder', x: 0, y: 44, w: 1, h: 10 },
+    ]
+  };
+  const [layouts, setLayouts] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dashboard_layouts_v1')) || defaultLayouts; } catch { return defaultLayouts; }
+  });
   const [isDarkMode, setIsDarkMode] = useState(() => getCookie('dark_mode') === 'true');
   const [language, setLanguage] = useState(() => getCookie('language') || 'en');
   const [accentColor, setAccentColor] = useState(() => getCookie('accent_color') || '#3b82f6');
@@ -692,14 +957,13 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#f3f6fa] dark:bg-[#121212] text-[#e0e0e0] dark:text-[#f0f0f0] min-h-screen p-4 flex flex-col font-['Source_Code_Pro',_monospace] transition-colors duration-300">
+    <div className="bg-[#f3f6fa] dark:bg-[#121212] text-[#333] dark:text-[#f0f0f0] min-h-screen p-4 flex flex-col font-['Source_Code_Pro',_monospace] transition-colors duration-300">
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
-      <script src="https://cdn.tailwindcss.com"></script>
       
       <div className="flex justify-end p-4 absolute top-0 right-0 z-10">
-        <div className="flex space-x-2 bg-white dark:bg-[#1e1e1e] p-2 rounded-full shadow-lg">
+        <div className="flex space-x-2 bg-white dark:bg-[#1E1E1E] p-2 rounded-full shadow-lg">
           <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" title="Light/Dark Switch">
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
@@ -714,7 +978,7 @@ export default function App() {
       
       {isColorPickerOpen && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-20">
-          <div className="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl shadow-xl w-80 relative">
+          <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-2xl shadow-xl w-80 relative">
             <h3 className="text-xl font-bold mb-4">{t('selectColor')}</h3>
             <div className="flex items-center justify-center mb-4">
                 <input
@@ -743,6 +1007,24 @@ export default function App() {
         </div>
       )}
 
+      <div className="flex-none p-4 pb-2 md:p-8 md:pb-4 text-center">
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
+          {t('dashboardTitle')}
+        </h1>
+        <p className="mt-2 text-gray-500 dark:text-[#B3B3B3]">
+          {t('dashboardSubtitle')}
+        </p>
       </div>
+      
+      <div className="flex-grow p-4 md:p-8">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          <NewsFeedCard t={t} language={language} accentColor={accentColor} />
+          <MarketTickerCard t={t} accentColor={accentColor} />
+          <WeatherCard t={t} />
+          <CalculatorCard t={t} accentColor={accentColor} />
+          <WorkTimerCard t={t} />
+        </div>
+      </div>
+    </div>
   );
 }
