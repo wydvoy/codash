@@ -360,7 +360,7 @@ const CalculatorCard = ({ t, accentColor }) => {
   const calculate = (expr) => {
     try {
       const sanitizedExpr = expr.replace(/×/g, '*').replace(/÷/g, '/');
-      const tokens = sanitizedExpr.match(/(\\d+\\.?\\d*|\\-|\\+|\\*|\\/)/g) || [];
+      const tokens = sanitizedExpr.match(/(\d+\.?\d*|[+\-*/])/g) || [];
       
       let numbers = [];
       let operators = [];
