@@ -168,7 +168,8 @@ const translations = {
 
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
-  const [forecastDays, setForecastDays] = useState(7);
+  const [forecastDays, setForecastDays] = useState(16);
+  const [forecastDays, setForecastDays] = useState(16);
 
   const [city, setCity] = useState('Siegen');
   const [country, setCountry] = useState('Germany');
@@ -920,6 +921,23 @@ const MarketTickerCard = ({ t, accentColor }) => {
 
 export default function App() {
 
+  React.useLayoutEffect(() => {
+    const GAP = 16;
+    const TOP = 80;
+    const calc = () => {
+      const h = window.innerHeight || 900;
+      const isXL = window.matchMedia('(min-width: 1280px)').matches;
+      const isMD = window.matchMedia('(min-width: 768px)').matches && !isXL;
+      const rows = isXL ? 2 : isMD ? 3 : 9999;
+      const maxH = rows >= 9999 ? 'none' : Math.max(280, Math.floor((h - TOP - GAP * (rows + 1)) / rows));
+      document.documentElement.style.setProperty('--card-max-h', typeof maxH === 'number' ? `${maxH}px` : maxH);
+    };
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
+  }, []);
+
+
   // Trello-like collision: try pointerWithin first, then rectIntersection, then closestCenter
   const customCollision = (args) => {
     const pointer = pointerWithin(args);
@@ -1069,7 +1087,7 @@ export default function App() {
           </div>
         </div>
       )}
-      
+
       <div className="flex-grow p-4 md:p-8">
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           <NewsFeedCard t={t} language={language} accentColor={accentColor} />

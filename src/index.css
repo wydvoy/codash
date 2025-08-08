@@ -17,3 +17,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+:root { --card-max-h: none; }
+.dashboard-card {
+  max-height: var(--card-max-h);
+  display: flex;
+  flex-direction: column;
+}
+.card-body {
+  overflow: auto;
+}
