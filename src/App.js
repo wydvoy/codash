@@ -1037,7 +1037,7 @@ export default function App() {
         </div>
       )}
 
-      <!-- removed title block for space --><div className="hidden">
+      <div className="hidden">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
           {t('dashboardTitle')}
         </h1>
