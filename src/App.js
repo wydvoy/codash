@@ -169,7 +169,6 @@ const translations = {
 // === Weather Component ===
 const WeatherCard = ({ t }) => {
   const [forecastDays, setForecastDays] = useState(7);
-  const [forecastDays, setForecastDays] = useState(7);
 
   const [city, setCity] = useState('Siegen');
   const [country, setCountry] = useState('Germany');
