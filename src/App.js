@@ -379,8 +379,7 @@ const WeatherCard = ({ t }) => {
                   </div>
                 );
               })}
-            </div>
-          </div>
+            </div></div>
         </div>
       )}
     </div>
@@ -893,7 +892,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
         
       </div>
       {loading && <div className="text-xs opacity-70">{t('refreshing')}</div>}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="card-body grid grid-cols-2 md:grid-cols-3 gap-3">
         {symbols.map((sym) => {
           const id = MAP[sym];
           const row = data[id];
@@ -1088,7 +1087,7 @@ export default function App() {
       )}
 
       <div className="flex-grow p-4 md:p-8">
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4">
           <NewsFeedCard t={t} language={language} accentColor={accentColor} />
           <MarketTickerCard t={t} accentColor={accentColor} />
           <WeatherCard t={t} />
