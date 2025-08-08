@@ -27,3 +27,43 @@ code {
 .card-body {
   overflow: auto;
 }
+
+
+/* Masonry grid using CSS Grid with auto-rows + JS span calc */
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 8px;       /* base row height */
+  gap: 16px;
+}
+@media (max-width: 1279px) {
+  .masonry { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .masonry { grid-template-columns: 1fr; }
+}
+.masonry-item { width: 100%; }
+
+/* Card visuals reused */
+.card-shell {
+  background: #ffffff;
+  color: #111827;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  padding: 1.5rem;
+}
+.dark .card-shell {
+  background: #1E1E1E;
+  color: #f0f0f0;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title { font-size: 1.5rem; font-weight: 700; }
+.card-body-wrap { margin-top: 1rem; }
+
+/* Keep previous cap + scroll behaviour */
+.dashboard-card { max-height: var(--card-max-h); display: flex; flex-direction: column; }
+.card-body { overflow: auto; }

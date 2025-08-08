@@ -919,6 +919,31 @@ const MarketTickerCard = ({ t, accentColor }) => {
 
 export default function App() {
 
+  // Masonry span calculation
+  React.useEffect(() => {
+    const ROW = 8;   // must match grid-auto-rows
+    const GAP = 16;  // must match .masonry gap
+    const items = document.querySelectorAll('.masonry-item');
+    const update = (el) => {
+      const content = el.querySelector('.card-shell');
+      if (!content) return;
+      const h = content.getBoundingClientRect().height;
+      const span = Math.ceil((h + GAP) / (ROW + GAP));
+      el.style.gridRowEnd = `span ${span}`;
+    };
+    const ro = new ResizeObserver((entries) => {
+      for (const e of entries) update(e.target.closest('.masonry-item') || e.target);
+    });
+    items.forEach((item) => {
+      update(item);
+      const inner = item.querySelector('.card-shell');
+      if (inner) ro.observe(inner);
+    });
+    window.addEventListener('resize', () => items.forEach(update));
+    return () => ro.disconnect();
+  }, []);
+
+
   React.useLayoutEffect(() => {
     const GAP = 16;
     const TOP = 80;
