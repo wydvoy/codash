@@ -288,7 +288,7 @@ const WeatherCard = ({ t }) => {
   
   return (
     <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-6 transition-all duration-300">
-      <div className="flex items-center justify-between drag-handle cursor-move select-none">
+      <div className="flex items-center justify-between ">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('weather')}</h2>
         <form onSubmit={handleSearch} className="relative w-1/2">
           <input
@@ -638,7 +638,7 @@ const WorkTimerCard = ({ t }) => {
 
   return (
     <div className="w-full bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl relative p-6 md:p-8 space-y-6 transition-all duration-300 relative">
-      <div className="flex justify-between items-center drag-handle cursor-move select-none">
+      <div className="flex justify-between items-center ">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('workTimer')}</h2>
         <button onClick={() => setShowSettings(true)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600">
           <Settings size={20} />
@@ -904,7 +904,7 @@ const MarketTickerCard = ({ t, accentColor }) => {
           const up = typeof change === 'number' ? change >= 0 : null;
           return (
             <div key={sym} className="p-3 rounded-xl bg-gray-100 dark:bg-[#2A2A2A] flex flex-col gap-1">
-              <div className="flex items-center justify-between drag-handle cursor-move select-none">
+              <div className="flex items-center justify-between ">
                 <div className="text-sm font-bold">{sym}</div>
                 <button onClick={() => removeSymbol(sym)} className="text-[11px] opacity-70 hover:opacity-100" title={t('remove')}>✕</button>
               </div>
@@ -921,6 +921,10 @@ const MarketTickerCard = ({ t, accentColor }) => {
 };
 
 export default function App() {
+  const [order, setOrder] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem('dashboard_order_v1')) || ["weather","calc","timer","news","markets","placeholder"]; } catch { return ["weather","calc","timer","news","markets","placeholder"]; }
+  });
+
   const V_MARGIN = 16;
   const CARD_ROWS = 10;            // each card's grid height
   const TOTAL_ROWS = CARD_ROWS * 2; // two rows target on large screens
@@ -1057,15 +1061,6 @@ export default function App() {
           </div>
         </div>
       )}
-
-	<div className="hidden">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100">
-          {t('dashboardTitle')}
-        </h1>
-        <p className="mt-2 text-gray-500 dark:text-[#B3B3B3]">
-          {t('dashboardSubtitle')}
-        </p>
-      </div>
       
       <div className="flex-grow p-4 md:p-8">
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
