@@ -3,14 +3,12 @@ import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cog, RefreshCw, Clock3, Search, TrendingUp, TrendingDown } from "lucide-react";
 
-// --------- Hilfsfunktionen ---------
 const pad = (n) => String(n).padStart(2, "0");
 const fmtMoney = (n, currency = "USD") =>
   new Intl.NumberFormat("de-DE", { style: "currency", currency }).format(n);
 
-const defaultAccent = "#22c55e"; // Standard-Akzent
+const defaultAccent = "#22c55e";
 
-// --------- Header (ohne "Dashboard"-Titel) ---------
 function Header({ accent, setAccent }) {
   return (
     <div className="flex items-center justify-end gap-4">
@@ -46,7 +44,6 @@ function Card({ title, right, children, accent }) {
   );
 }
 
-// --- News (Tagesschau RSS) ---
 function News({ accent }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,7 +70,7 @@ function News({ accent }) {
     const enc = encodeURIComponent(targetUrl);
     const candidates = [
       `https://api.allorigins.win/raw?url=${enc}`,
-      `https://api.allorigins.win/get?url=${enc}`, // returns {contents: "..."}
+      `https://api.allorigins.win/get?url=${enc}`,
       `https://cors.isomorphic-git.org/${targetUrl}`,
     ];
     for (const u of candidates) {
@@ -82,18 +79,15 @@ function News({ accent }) {
         const text = await tryFetch(u, isJson);
         if (text) return text;
       } catch {
-        // nächster Proxy
       }
     }
     throw new Error("No proxy worked");
   };
 
   const extractImageFromDescription = (description = "") => {
-    // 1) Direktes <img src="..."> im description?
     const imgTag = description.match(/<img[^>]+src="([^"]+)"/i);
     if (imgTag && IMG_RE.test(imgTag[1])) return imgTag[1];
 
-    // 2) Allgemein: irgendeine images.tagesschau.de-URL im description-HTML?
     const any = description.match(IMG_RE);
     if (any) return any[1];
 
@@ -137,7 +131,6 @@ function News({ accent }) {
       const xml = new window.DOMParser().parseFromString(xmlText, "text/xml");
       const nodes = Array.from(xml.querySelectorAll("item")).slice(0, 6);
 
-      // Erstes Mapping: versuche Bild aus RSS (enclosure/media/description)
       const prelim = nodes.map((n) => {
         const title = n.querySelector("title")?.textContent ?? "";
         const link = n.querySelector("link")?.textContent ?? "#";
@@ -154,7 +147,6 @@ function News({ accent }) {
         return { title, link, pubDate, image };
       });
 
-      // Zweite Runde: wo noch kein Bild → Artikel-HTML scrapen
       const filled = await Promise.all(
         prelim.map(async (it) => {
           if (!it.image) {
@@ -178,7 +170,7 @@ function News({ accent }) {
 
   useEffect(() => {
     fetchNews();
-    const id = setInterval(fetchNews, 5 * 60 * 1000);
+    const id = setInterval(fetchNews, 30 * 60 * 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -376,7 +368,7 @@ function Wetter({ accent }) {
 
   useEffect(() => {
     fetchWeather(city, country);
-    const id = setInterval(() => fetchWeather(city, country), 5 * 60 * 1000);
+    const id = setInterval(() => fetchWeather(city, country), 15 * 60 * 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -391,7 +383,6 @@ function Wetter({ accent }) {
     }
   };
 
-  // aktuelle Temperatur stabil aus current_weather; aktueller UV aus hourly "uv_index"
   const currentTemp = weatherData?.current_weather?.temperature;
   const currentUV = useMemo(() => {
     if (!weatherData?.hourly) return null;
@@ -421,7 +412,7 @@ function Wetter({ accent }) {
         <div className="text-lg text-white">{city}{country ? `, ${country}` : ""}</div>
         <div className="text-5xl font-semibold my-2">{currentTemp !== undefined ? `${Math.round(currentTemp)}°C` : "—"}</div>
         <div className="text-sm text-zinc-400 flex items-center gap-3">
-          <span>Aktualisiert alle 5 Minuten</span>
+          <span>Aktualisiert alle 15 Minuten</span>
 			{typeof currentUV === "number" && !Number.isNaN(currentUV) && (
 			  <span className="px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700">
 				UV {currentUV.toFixed(1)}
@@ -533,7 +524,7 @@ function ArbeitsTimer({ accent }) {
     const [hh, mm] = target.split(":").map((n) => parseInt(n, 10));
     const d = new Date();
     d.setHours(hh, mm, 0, 0);
-    if (d.getTime() < now) d.setDate(d.getDate() + 1); // wenn vorbei, auf morgen
+    if (d.getTime() < now) d.setDate(d.getDate() + 1);
     return d;
   }, [target, now]);
 
