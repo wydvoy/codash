@@ -66,23 +66,11 @@ function News({ accent }) {
     return await res.text();
   };
 
-  const fetchViaProxies = async (targetUrl) => {
-    const enc = encodeURIComponent(targetUrl);
-    const candidates = [
-      `https://api.allorigins.win/raw?url=${enc}`,
-      `https://api.allorigins.win/get?url=${enc}`,
-      `https://cors.isomorphic-git.org/${targetUrl}`,
-    ];
-    for (const u of candidates) {
-      try {
-        const isJson = u.includes("/get?url=");
-        const text = await tryFetch(u, isJson);
-        if (text) return text;
-      } catch {
-      }
-    }
-    throw new Error("No proxy worked");
-  };
+	const fetchServer = async (url) => {
+	  const res = await fetch(`/.netlify/functions/rss?url=${encodeURIComponent(url)}`);
+	  if (!res.ok) throw new Error("server function failed " + res.status);
+	  return await res.text();
+	};
 
   const extractImageFromDescription = (description = "") => {
     const imgTag = description.match(/<img[^>]+src="([^"]+)"/i);
@@ -116,7 +104,7 @@ function News({ accent }) {
 
   const fetchArticleImage = async (articleUrl) => {
     try {
-      const html = await fetchViaProxies(articleUrl);
+      const html = await fetchServer(articleUrl);
       return extractImageFromHtml(html);
     } catch {
       return "";
@@ -127,7 +115,7 @@ function News({ accent }) {
     setError("");
     setLoading(true);
     try {
-      const xmlText = await fetchViaProxies(RSS_URL);
+      const xmlText = await fetchServer(RSS_URL);
       const xml = new window.DOMParser().parseFromString(xmlText, "text/xml");
       const nodes = Array.from(xml.querySelectorAll("item")).slice(0, 6);
 
@@ -144,7 +132,8 @@ function News({ accent }) {
           extractImageFromDescription(description) ||
           "";
 
-        return { title, link, pubDate, image };
+        const clean = (u) => (u ? u.replace(/&amp;/g, "&").trim() : "");
+		return { title, link, pubDate, image: clean(image) };
       });
 
       const filled = await Promise.all(
@@ -240,6 +229,7 @@ const COIN_MAP = {
   ethereum: { label: "ETH" },
   solana: { label: "SOL" },
   ripple: { label: "XRP" },
+  monero: { label: "XMR" }
 };
 
 function Markets({ accent }) {
