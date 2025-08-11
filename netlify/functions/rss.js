@@ -13,7 +13,7 @@ export async function handler(event) {
       statusCode: 200,
       headers: {
         "Content-Type": "application/rss+xml; charset=utf-8",
-        "Cache-Control": "public, max-age=300" // 5 Min Cache auf Netlify Edge
+        "Cache-Control": "public, max-age=300"
       },
       body: text,
     };
@@ -21,3 +21,4 @@ export async function handler(event) {
     return { statusCode: 500, body: "Fetch failed" };
   }
 }
+
