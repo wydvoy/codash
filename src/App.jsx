@@ -52,7 +52,12 @@ function News({ accent }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const RSS_URL = "https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml";
+  const RSS_URL =
+    "https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml";
+
+  // ---- Helpers ----
+  const IMG_RE =
+    /(https?:\/\/images\.tagesschau\.de\/[^\s"'>)]+?\.(?:jpg|jpeg|png|webp))(?:\?[^\s"'>)]*)?/i;
 
   const tryFetch = async (url, parseJson = false) => {
     const res = await fetch(url, { referrerPolicy: "no-referrer" });
@@ -64,53 +69,104 @@ function News({ accent }) {
     return await res.text();
   };
 
+  const fetchViaProxies = async (targetUrl) => {
+    const enc = encodeURIComponent(targetUrl);
+    const candidates = [
+      `https://api.allorigins.win/raw?url=${enc}`,
+      `https://api.allorigins.win/get?url=${enc}`, // returns {contents: "..."}
+      `https://cors.isomorphic-git.org/${targetUrl}`,
+    ];
+    for (const u of candidates) {
+      try {
+        const isJson = u.includes("/get?url=");
+        const text = await tryFetch(u, isJson);
+        if (text) return text;
+      } catch {
+        // nächster Proxy
+      }
+    }
+    throw new Error("No proxy worked");
+  };
+
+  const extractImageFromDescription = (description = "") => {
+    // 1) Direktes <img src="..."> im description?
+    const imgTag = description.match(/<img[^>]+src="([^"]+)"/i);
+    if (imgTag && IMG_RE.test(imgTag[1])) return imgTag[1];
+
+    // 2) Allgemein: irgendeine images.tagesschau.de-URL im description-HTML?
+    const any = description.match(IMG_RE);
+    if (any) return any[1];
+
+    return "";
+  };
+
+  const extractImageFromHtml = (html) => {
+    // a) <img src="https://images.tagesschau.de/...">
+    const img = html.match(/<img[^>]+src="([^"]+)"/i);
+    if (img && IMG_RE.test(img[1])) return img[1];
+
+    // b) <source srcset="https://images.tagesschau.de/... 1x, ...">
+    const srcset = html.match(/srcset="([^"]+)"/i);
+    if (srcset) {
+      // Nimm den ersten Eintrag aus srcset, der auf images.tagesschau.de zeigt
+      const firstMatch = srcset[1].split(",").map(s => s.trim().split(" ")[0]).find(u => IMG_RE.test(u));
+      if (firstMatch) return firstMatch;
+    }
+
+    // c) Fallback: irgendeine images.tagesschau.de-URL irgendwo im HTML
+    const any = html.match(IMG_RE);
+    if (any) return any[1];
+
+    return "";
+  };
+
+  const fetchArticleImage = async (articleUrl) => {
+    try {
+      const html = await fetchViaProxies(articleUrl);
+      return extractImageFromHtml(html);
+    } catch {
+      return "";
+    }
+  };
+
   const fetchNews = async () => {
     setError("");
     setLoading(true);
     try {
-      const enc = encodeURIComponent(RSS_URL);
-      let xmlText = "";
-      const candidates = [
-        { url: `https://api.allorigins.win/raw?url=${enc}`, json: false },
-        { url: `https://api.allorigins.win/get?url=${enc}`, json: true },
-        { url: `https://cors.isomorphic-git.org/${RSS_URL}`, json: false },
-      ];
-
-      for (const c of candidates) {
-        try {
-          xmlText = await tryFetch(c.url, c.json);
-          if (xmlText) break;
-        } catch {
-          // nächster Versuch
-        }
-      }
-      if (!xmlText) throw new Error("no data");
-
+      const xmlText = await fetchViaProxies(RSS_URL);
       const xml = new window.DOMParser().parseFromString(xmlText, "text/xml");
       const nodes = Array.from(xml.querySelectorAll("item")).slice(0, 6);
-      const list = nodes.map((n) => {
+
+      // Erstes Mapping: versuche Bild aus RSS (enclosure/media/description)
+      const prelim = nodes.map((n) => {
         const title = n.querySelector("title")?.textContent ?? "";
         const link = n.querySelector("link")?.textContent ?? "#";
         const pubDate = n.querySelector("pubDate")?.textContent ?? "";
         const description = n.querySelector("description")?.textContent ?? "";
 
-        // Vorschau-Bild suchen
         let image =
           n.querySelector("enclosure")?.getAttribute("url") ||
           n.querySelector("media\\:content")?.getAttribute("url") ||
           n.querySelector("media\\:thumbnail")?.getAttribute("url") ||
+          extractImageFromDescription(description) ||
           "";
-
-        if (!image && description) {
-          const m = description.match(/<img[^>]+src=\\"([^\\"]+)\\"/i);
-          if (m) image = m[1];
-        }
 
         return { title, link, pubDate, image };
       });
 
-      if (!list.length) setError("Keine Nachrichten gefunden");
-      setItems(list);
+      // Zweite Runde: wo noch kein Bild → Artikel-HTML scrapen
+      const filled = await Promise.all(
+        prelim.map(async (it) => {
+          if (!it.image) {
+            const img = await fetchArticleImage(it.link);
+            if (img) it.image = img;
+          }
+          return it;
+        })
+      );
+
+      if (!filled.length) setError("Keine Nachrichten gefunden");
+      setItems(filled);
     } catch (e) {
       console.error(e);
       setError("News konnten nicht geladen werden");
@@ -184,6 +240,7 @@ function News({ accent }) {
     </Card>
   );
 }
+
 
 // --- Krypto Märkte (CoinGecko) ---
 const COIN_MAP = {
