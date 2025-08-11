@@ -50,35 +50,71 @@ function Card({ title, right, children, accent }) {
 function News({ accent }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const RSS_URL = "https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml";
+
+  const tryFetch = async (url, parseJson = false) => {
+    const res = await fetch(url, { referrerPolicy: "no-referrer" });
+    if (!res.ok) throw new Error("fetch failed");
+    if (parseJson) {
+      const j = await res.json();
+      return j.contents;
+    }
+    return await res.text();
+  };
 
   const fetchNews = async () => {
+    setError("");
+    setLoading(true);
     try {
-      setLoading(true);
-      const url = encodeURIComponent(
-        "https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml"
-      );
-      const res = await fetch(`https://api.allorigins.win/get?url=${url}`);
-      const data = await res.json();
-      const xml = new window.DOMParser().parseFromString(data.contents, "text/xml");
-      const nodes = [...xml.querySelectorAll("item")].slice(0, 6);
+      const enc = encodeURIComponent(RSS_URL);
+      let xmlText = "";
+      const candidates = [
+        { url: `https://api.allorigins.win/raw?url=${enc}`, json: false },
+        { url: `https://api.allorigins.win/get?url=${enc}`, json: true },
+        { url: `https://cors.isomorphic-git.org/${RSS_URL}`, json: false },
+      ];
+
+      for (const c of candidates) {
+        try {
+          xmlText = await tryFetch(c.url, c.json);
+          if (xmlText) break;
+        } catch {
+          // nächster Versuch
+        }
+      }
+      if (!xmlText) throw new Error("no data");
+
+      const xml = new window.DOMParser().parseFromString(xmlText, "text/xml");
+      const nodes = Array.from(xml.querySelectorAll("item")).slice(0, 6);
       const list = nodes.map((n) => {
         const title = n.querySelector("title")?.textContent ?? "";
         const link = n.querySelector("link")?.textContent ?? "#";
         const pubDate = n.querySelector("pubDate")?.textContent ?? "";
         const description = n.querySelector("description")?.textContent ?? "";
-        // Bildquellen: enclosure, media:content, media:thumbnail oder <img> in description
-        let image = n.querySelector("enclosure")?.getAttribute("url") ||
-                    n.querySelector("media\:content")?.getAttribute("url") ||
-                    n.querySelector("media\:thumbnail")?.getAttribute("url") || "";
+
+        // Vorschau-Bild suchen
+        let image =
+          n.querySelector("enclosure")?.getAttribute("url") ||
+          n.querySelector("media\\:content")?.getAttribute("url") ||
+          n.querySelector("media\\:thumbnail")?.getAttribute("url") ||
+          "";
+
         if (!image && description) {
-          const m = description.match(/<img[^>]+src=\"([^\"]+)\"/i);
+          const m = description.match(/<img[^>]+src=\\"([^\\"]+)\\"/i);
           if (m) image = m[1];
         }
+
         return { title, link, pubDate, image };
       });
+
+      if (!list.length) setError("Keine Nachrichten gefunden");
       setItems(list);
     } catch (e) {
       console.error(e);
+      setError("News konnten nicht geladen werden");
+      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -106,6 +142,8 @@ function News({ accent }) {
     >
       <div className="space-y-4">
         {loading && <div className="text-zinc-400 text-sm">Lade…</div>}
+        {error && !loading && <div className="text-sm text-red-400">{error}</div>}
+
         <AnimatePresence>
           {items.map((it, i) => (
             <motion.a
@@ -128,13 +166,20 @@ function News({ accent }) {
                   {it.title}
                 </div>
                 <div className="text-xs text-zinc-500">
-                  {new Date(it.pubDate).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+                  {new Date(it.pubDate).toLocaleTimeString("de-DE", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
               </div>
             </motion.a>
           ))}
         </AnimatePresence>
-        <div className="text-[11px] text-zinc-500">Letztes Update: {new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</div>
+
+        <div className="text-[11px] text-zinc-500">
+          Letztes Update:{" "}
+          {new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+        </div>
       </div>
     </Card>
   );
@@ -320,9 +365,11 @@ function Wetter({ accent }) {
         <div className="text-5xl font-semibold my-2">{currentTemp !== undefined ? `${Math.round(currentTemp)}°C` : "—"}</div>
         <div className="text-sm text-zinc-400 flex items-center gap-3">
           <span>Aktualisiert alle 5 Minuten</span>
-          {currentUV !== null && (
-            <span className="px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700">UV {Math.round(currentUV)}</span>
-          )}
+			{typeof currentUV === "number" && !Number.isNaN(currentUV) && (
+			  <span className="px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700">
+				UV {currentUV.toFixed(1)}
+			  </span>
+			)}
         </div>
       </div>
       <div className="mt-6 space-y-3">
@@ -333,9 +380,11 @@ function Wetter({ accent }) {
             </div>
             <div className="text-zinc-200 flex items-center gap-3">
               <span>{Math.round(weatherData.daily.temperature_2m_max[i])}° / {Math.round(weatherData.daily.temperature_2m_min[i])}°</span>
-              {typeof weatherData.daily.uv_index_max?.[i] === "number" && (
-                <span className="text-xs text-zinc-400">UV max {Math.round(weatherData.daily.uv_index_max[i])}</span>
-              )}
+				{typeof weatherData.daily.uv_index_max?.[i] === "number" && (
+				  <span className="text-xs text-zinc-400">
+					UV max {weatherData.daily.uv_index_max[i].toFixed(1)}
+				  </span>
+				)}
             </div>
           </div>
         ))}
